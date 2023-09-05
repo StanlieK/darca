@@ -1,0 +1,35 @@
+{
+  "name": "darca",
+  "version": "0.0.4",
+  "description": "Dependency Assistent for Really Complex Applications",
+  "main": "src/index.js",
+  "bin": "src/index.js",
+  "files": [
+    "src/**/*.js"
+  ],
+  "scripts": {
+    "format": "prettier --write '**/*.{js,json,less,md,html}'"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "tabWidth": 2
+  },
+  "keywords": [
+    "npm",
+    "dev",
+    "manager"
+  ],
+  "author": "Stanislav Kubik <skubik3@icloud.com>",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "rimraf": "^5.0.1",
+    "verdaccio": "^5.26.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.48.0",
+    "prettier": "^3.0.3"
+  }
+}
