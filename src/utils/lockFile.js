@@ -1,8 +1,16 @@
-const { readFileSync, readdirSync, statSync, existsSync, copyFileSync } = require('fs');
+const {
+  readFileSync,
+  readdirSync,
+  statSync,
+  existsSync,
+  copyFileSync,
+  writeFileSync,
+} = require('fs');
 const { join } = require('path');
 
 const { rimrafSync } = require('rimraf');
 const { exec } = require('../npm');
+const { port } = require('../config');
 
 const PACKAGE_JSON_FILE = 'package.json';
 const DARCA_LOCK_FILE = 'darca.lock.json';
@@ -40,7 +48,7 @@ const findPackageJsonFiles = (dir) => {
 };
 
 const getPackageJsonFiles = (rootDir) => {
-  const packageJson = readFileSync('./package.json');
+  const packageJson = readFileSync(join(rootDir, 'package.json'));
   const workspaces = JSON.parse(packageJson.toString('utf-8')).workspaces;
 
   if (!workspaces) {
@@ -73,10 +81,23 @@ const getProjectRoot = async () => {
       }
 
       if (stdout) {
-        resolve(stdout.split('/node_modules')[0]);
+        resolve(stdout.trimStart().trimEnd().split('/node_modules')[0]);
       }
     });
   });
+};
+
+const overridePublishConfig = (path) => {
+  const fileContent = readFileSync(path);
+  const textualContent = fileContent.toString('utf-8');
+  const tabSize = textualContent.split('\n')[1].split('"')[0].length;
+  const jsonContent = JSON.parse(textualContent);
+
+  if (jsonContent.publishConfig && jsonContent.publishConfig.registry) {
+    jsonContent.publishConfig.registry = `http://localhost:${port}/`;
+
+    writeFileSync(path, JSON.stringify(jsonContent, null, tabSize));
+  }
 };
 
 const createLockFile = (path) => {
@@ -84,11 +105,12 @@ const createLockFile = (path) => {
   const darcaLockPath = join(path, DARCA_LOCK_FILE);
 
   if (existsSync(packageLockPath) && !existsSync(darcaLockPath)) {
-    if (process.env.DEBUG) {
+    if (process.env.DEBUG && process.env.DEBUG === 'true') {
       console.log(`Creating ${darcaLockPath} from ${packageLockPath}`);
     }
 
     copyFileSync(packageLockPath, darcaLockPath);
+    overridePublishConfig(packageLockPath);
   }
 };
 
@@ -104,7 +126,7 @@ const retreatLockFile = (path) => {
   const darcaLockPath = join(path, DARCA_LOCK_FILE);
 
   if (existsSync(join(path, DARCA_LOCK_FILE))) {
-    if (process.env.DEBUG) {
+    if (process.env.DEBUG && process.env.DEBUG === 'true') {
       console.log(`Retreating ${packageLockPath} from ${darcaLockPath}`);
     }
 

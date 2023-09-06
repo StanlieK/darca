@@ -10,25 +10,35 @@ const DARCA_STORAGE_PATH = join(DARCA_PATH, 'storage');
 
 const DARCA_DEFAULT_REGISTRY = 'https://registry.npmjs.org/';
 
-const getServerConfig = () => {
+const getRegistry = async () => {
   const globalOpts = program.optsWithGlobals();
-  let registry = DARCA_DEFAULT_REGISTRY;
 
-  if (process.env.REGISTRY) {
-    registry = process.env.REGISTRY;
-  } else if (globalOpts.registry) {
-    registry = globalOpts.registry;
-  } else {
+  return new Promise((resolve) => {
+    if (process.env.REGISTRY) {
+      resolve(process.env.REGISTRY);
+      return;
+    }
+
+    if (globalOpts.registry) {
+      resolve(globalOpts.registry);
+      return;
+    }
+
     exec(['config', 'get', 'registry'], null, (error, stdout) => {
       if (error) {
+        resolve(DARCA_DEFAULT_REGISTRY);
         return;
       }
 
       if (stdout) {
-        registry = stdout;
+        resolve(stdout.trimStart().trimEnd());
       }
     });
-  }
+  });
+};
+
+const getServerConfig = async () => {
+  const registry = await getRegistry();
 
   return {
     storage: DARCA_STORAGE_PATH,
@@ -64,7 +74,15 @@ const getServerConfig = () => {
 };
 
 const start = async (port, customConfig) => {
-  const app = await runServer({ ...getServerConfig(), ...customConfig });
+  const defaultServerConfig = await getServerConfig();
+  const config = { ...defaultServerConfig, ...customConfig };
+
+  if (process.env.DEBUG && process.env.DEBUG === 'true') {
+    console.log('Starting server with following config:');
+    console.log(JSON.stringify(config, null, 2));
+  }
+
+  const app = await runServer(config);
 
   app.listen(port, () => {
     // do nothing

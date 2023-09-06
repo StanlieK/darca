@@ -10,7 +10,7 @@ const unpublishAction = (args) => {
   exec(
     [
       'unpublish',
-      `--registry=http://localhost:${port}/ --//localhost:3000/:_authToken=MYTOKEN --force`,
+      `--registry=http://localhost:${port}/ --//localhost:${port}/:_authToken=MYTOKEN --force`,
       ...args,
     ],
     (code) => {

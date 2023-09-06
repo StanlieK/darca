@@ -3,14 +3,17 @@ const { exit } = require('process');
 const { port } = require('../config');
 const { start } = require('../server');
 const { exec } = require('../npm');
+const { createLockFiles } = require('../utils/lockFile');
 
 const publishAction = (args) => {
+  createLockFiles();
+
   start(port);
 
   exec(
     [
       'publish',
-      `--registry=http://localhost:${port}/ --//localhost:3000/:_authToken=MYTOKEN`,
+      `--registry=http://localhost:${port}/ --//localhost:${port}/:_authToken=MYTOKEN`,
       ...args,
     ],
     (code) => {
@@ -31,7 +34,6 @@ const publishAction = (args) => {
       }
 
       if (stderr) {
-        console.log('err');
         console.error(`${stderr}`);
       }
     }
