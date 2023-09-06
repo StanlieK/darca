@@ -1,4 +1,4 @@
-# Dependency Assistent for Really Complex Applications
+# Dependency Assistant for Really Complex Applications
 
 ## Requirements
 
@@ -39,3 +39,9 @@ Commands:
   start-server                 starts local registry (verdaccio) as a standolone server
   help [command]               display help for command
 ```
+
+# TODOs
+
+- add examples of usage
+- rewrite to TypeScript
+- add tests
