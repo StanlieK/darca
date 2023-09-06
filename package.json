@@ -1,7 +1,7 @@
 {
   "name": "darca",
   "version": "0.0.6",
-  "description": "Dependency Assistent for Really Complex Applications",
+  "description": "Dependency Assistant for Really Complex Applications",
   "main": "src/index.js",
   "bin": "src/index.js",
   "files": [
