@@ -1,19 +1,24 @@
 #!/usr/bin/env node
-// Dependency Assisstent for Resolving Complicated
+// Dependency Assistant for Resolving Complicated
 
-const { program } = require('commander');
-const install = require('./cmd/install');
-const retreat = require('./cmd/retreat');
-const startServer = require('./cmd/startServer');
-const cleanCache = require('./cmd/cleanCache');
-const publish = require('./cmd/publish');
-const unpublish = require('./cmd/unpublish');
-const { version } = require('../package.json');
+import { program } from 'commander';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+import install from './cmd/install';
+import retreat from './cmd/retreat';
+import startServer from './cmd/startServer';
+import cleanCache from './cmd/cleanCache';
+import publish from './cmd/publish';
+import unpublish from './cmd/unpublish';
 
 (async () => {
+  const packageFile = readFileSync(join(__dirname, '../package.json'));
+  const { version } = JSON.parse(packageFile.toString('utf-8'));
+
   program
     .name('darca')
-    .description('Dependency Assistent for Really Complex Applications')
+    .description('Dependency Assistant for Really Complex Applications')
     .version(version)
     .helpOption('-H --HELP')
     .option('-r --registry [value]');
