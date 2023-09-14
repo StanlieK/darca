@@ -12,21 +12,23 @@ const npmExec = (args, callback, outputCallback) => {
     `npm ${npmArgs}`,
     outputCallback
       ? outputCallback
-      : (error, stdout, stderr) => {
+      : (error, _, _) => {
           if (error) {
             console.error(`Error: ${error}`);
             return;
           }
-
-          if (stdout) {
-            console.log(`${stdout}`);
-          }
-
-          if (stderr) {
-            console.error(`${stderr}`);
-          }
         }
   );
+
+  if (!outputCallback) {
+    child.stdout.on('data', (chunk) => {
+      console.log(chunk);
+    });
+
+    child.stderr.on('data', (chunk) => {
+      console.log(chunk);
+    });
+  }
 
   // Listen for the exit event
   child.on('exit', (code) => {

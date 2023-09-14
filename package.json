@@ -1,14 +1,18 @@
 {
   "name": "darca",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "Dependency Assistant for Really Complex Applications",
-  "main": "src/index.js",
-  "bin": "src/index.js",
+  "main": "dist/index.js",
+  "bin": {
+    "darca": "dist/index.js"
+  },
   "files": [
-    "src/**/*.js"
+    "dist/**/*.js"
   ],
   "scripts": {
-    "format": "prettier --write '**/*.{js,json,less,md,html}'"
+    "build": "tsc -p tsconfig.json",
+    "prepack": "npm run build",
+    "format": "prettier --write '**/*.{ts,js,json,less,md,html}'"
   },
   "prettier": {
     "printWidth": 100,
@@ -19,7 +23,8 @@
   "keywords": [
     "npm",
     "dev",
-    "manager"
+    "manager",
+    "cli"
   ],
   "author": "Stanislav Kubik <skubik3@icloud.com>",
   "license": "MIT",
@@ -29,7 +34,11 @@
     "verdaccio": "^5.26.2"
   },
   "devDependencies": {
+    "@types/node": "^16.18.48",
+    "@typescript-eslint/eslint-plugin": "^6.6.0",
+    "@typescript-eslint/parser": "^6.6.0",
     "eslint": "^8.48.0",
-    "prettier": "^3.0.3"
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2"
   }
 }

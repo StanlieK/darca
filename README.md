@@ -23,7 +23,7 @@ npx darca
 ```
 Usage: darca [options] [command]
 
-Dependency Assistent for Really Complex Applications
+Dependency Assistant for Really Complex Applications
 
 Options:
   -V, --version                output the version number
