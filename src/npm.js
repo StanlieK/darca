@@ -12,7 +12,8 @@ const npmExec = (args, callback, outputCallback) => {
     `npm ${npmArgs}`,
     outputCallback
       ? outputCallback
-      : (error, _, _) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      : (error, stdout, stderr) => {
           if (error) {
             console.error(`Error: ${error}`);
             return;
