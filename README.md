@@ -45,3 +45,4 @@ Commands:
 - add examples of usage
 - rewrite to TypeScript
 - add tests
+- create lockfiles from package-lock.json as well - it allows to boost installation speed, if we can use it

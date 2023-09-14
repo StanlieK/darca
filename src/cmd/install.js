@@ -13,12 +13,9 @@ const installAction = (args) => {
 
   start(port);
 
-  exec(
-    ['install', `--registry=http://localhost:${port}/ --package-lock=false`, ...args],
-    (code) => {
-      exit(code);
-    }
-  );
+  exec(['install', `--registry=http://localhost:${port}/`, ...args], (code) => {
+    exit(code);
+  });
 };
 
 module.exports = {

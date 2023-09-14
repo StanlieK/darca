@@ -13,7 +13,9 @@ const { exec } = require('../npm');
 const { port } = require('../config');
 
 const PACKAGE_JSON_FILE = 'package.json';
+const PACKAGE_LOCK_JSON_FILE = 'package-lock.json';
 const DARCA_LOCK_FILE = 'darca.lock.json';
+const DARCA_PACKAGE_LOCK_FILE = 'darca.package-lock.json';
 
 const findPackageJsonFiles = (dir) => {
   const packageJsonFiles = [];
@@ -101,16 +103,26 @@ const overridePublishConfig = (path) => {
 };
 
 const createLockFile = (path) => {
-  const packageLockPath = join(path, PACKAGE_JSON_FILE);
+  const packageJsonPath = join(path, PACKAGE_JSON_FILE);
+  const packageLockPath = join(path, PACKAGE_LOCK_JSON_FILE);
   const darcaLockPath = join(path, DARCA_LOCK_FILE);
+  const darcaPackageLockPath = join(path, DARCA_PACKAGE_LOCK_FILE);
 
-  if (existsSync(packageLockPath) && !existsSync(darcaLockPath)) {
+  if (existsSync(packageJsonPath) && !existsSync(darcaLockPath)) {
     if (process.env.DEBUG && process.env.DEBUG === 'true') {
-      console.log(`Creating ${darcaLockPath} from ${packageLockPath}`);
+      console.log(`Creating ${darcaLockPath} from ${packageJsonPath}`);
     }
 
-    copyFileSync(packageLockPath, darcaLockPath);
-    overridePublishConfig(packageLockPath);
+    copyFileSync(packageJsonPath, darcaLockPath);
+    overridePublishConfig(packageJsonPath);
+  }
+
+  if (existsSync(packageLockPath) && !existsSync(darcaPackageLockPath)) {
+    if (process.env.DEBUG && process.env.DEBUG === 'true') {
+      console.log(`Creating ${darcaPackageLockPath} from ${packageLockPath}`);
+    }
+
+    copyFileSync(packageLockPath, darcaPackageLockPath);
   }
 };
 
@@ -122,17 +134,29 @@ const createLockFiles = async () => {
 };
 
 const retreatLockFile = (path) => {
-  const packageLockPath = join(path, PACKAGE_JSON_FILE);
+  const packageJsonPath = join(path, PACKAGE_JSON_FILE);
+  const packageLockPath = join(path, PACKAGE_LOCK_JSON_FILE);
   const darcaLockPath = join(path, DARCA_LOCK_FILE);
+  const darcaPackageLockPath = join(path, DARCA_PACKAGE_LOCK_FILE);
 
-  if (existsSync(join(path, DARCA_LOCK_FILE))) {
+  if (existsSync(darcaLockPath)) {
     if (process.env.DEBUG && process.env.DEBUG === 'true') {
-      console.log(`Retreating ${packageLockPath} from ${darcaLockPath}`);
+      console.log(`Retreating ${packageJsonPath} from ${darcaLockPath}`);
+    }
+
+    rimrafSync(packageJsonPath);
+    copyFileSync(darcaLockPath, packageJsonPath);
+    rimrafSync(darcaLockPath);
+  }
+
+  if (existsSync(darcaPackageLockPath)) {
+    if (process.env.DEBUG && process.env.DEBUG === 'true') {
+      console.log(`Retreating ${packageLockPath} from ${darcaPackageLockPath}`);
     }
 
     rimrafSync(packageLockPath);
-    copyFileSync(darcaLockPath, packageLockPath);
-    rimrafSync(darcaLockPath);
+    copyFileSync(darcaPackageLockPath, packageLockPath);
+    rimrafSync(darcaPackageLockPath);
   }
 };
 
